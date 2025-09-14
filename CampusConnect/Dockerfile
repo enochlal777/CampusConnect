@@ -10,6 +10,7 @@ WORKDIR /app
 # Copy Maven wrapper and configuration
 COPY pom.xml .
 COPY mvnw .
+RUN chmod +x mvnw
 COPY .mvn .mvn
 
 # Download dependencies for caching
