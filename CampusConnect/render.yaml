@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: campus-connect-api
+    env: java  # This is the most important line! It forces the Java environment.
+    plan: free # Or starter, etc.
+    buildCommand: "mvn clean package -DskipTests"
+    startCommand: "java -jar target/CampusConnect-0.0.1-SNAPSHOT.jar" # <-- CHECK THIS: Make sure this is your exact JAR file name!
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: campus-connect-db  # <-- CHECK THIS: Make sure this is the exact name of your Render database.
+          property: internalUrl
