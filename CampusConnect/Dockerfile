@@ -1,5 +1,8 @@
-# Stage 1: Build the Spring Boot app using Maven and OpenJDK 21
-FROM maven:3.9.2-openjdk-21 AS build
+# Stage 1: Build the Spring Boot app using OpenJDK 21 and Maven
+FROM openjdk:21-jdk-slim AS build
+
+# Install Maven
+RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
@@ -18,7 +21,7 @@ COPY CampusConnect/src ./src
 # Build the JAR file
 RUN ./mvnw clean package -DskipTests
 
-# Stage 2: Run the Spring Boot app using OpenJDK 21
+# Stage 2: Run the Spring Boot app with OpenJDK 21
 FROM openjdk:21-jdk-slim
 
 # Set working directory
