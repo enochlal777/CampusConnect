@@ -43,6 +43,7 @@ public class SecurityConfig {
                .securityMatcher("/auth/**", "/api/**")
                .authorizeHttpRequests(auth -> auth
                        .requestMatchers("/api/events/**").permitAll()
+                       .requestMatchers("/api/gemini/**").permitAll()
                        .requestMatchers("/api/password/**").permitAll()
                        .requestMatchers("/auth/**").permitAll()
                        .requestMatchers("/api/test/**").permitAll()
