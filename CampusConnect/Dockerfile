@@ -4,16 +4,16 @@ FROM maven:3.9.2-eclipse-temurin-17 AS build
 # Set working directory
 WORKDIR /app
 
-# Copy Maven configuration files
-COPY pom.xml .
-COPY mvnw .
-COPY .mvn .mvn
+# Copy Maven wrapper and configuration from the inner CampusConnect folder
+COPY CampusConnect/pom.xml .
+COPY CampusConnect/mvnw .
+COPY CampusConnect/.mvn .mvn
 
-# Download dependencies first (for caching)
+# Download dependencies for caching
 RUN ./mvnw dependency:go-offline -B
 
-# Copy the rest of the source code
-COPY src ./src
+# Copy the rest of the source code from the inner CampusConnect folder
+COPY CampusConnect/src ./src
 
 # Build the JAR file
 RUN ./mvnw clean package -DskipTests
@@ -24,11 +24,11 @@ FROM eclipse-temurin:17-jdk-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy the JAR from the build stage
+# Copy the built JAR from the build stage
 COPY --from=build /app/target/*.jar app.jar
 
 # Expose the port
 EXPOSE 8080
 
-# Run the app
+# Run the Spring Boot app
 ENTRYPOINT ["java","-jar","app.jar"]
