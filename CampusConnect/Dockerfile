@@ -1,25 +1,29 @@
-# Stage 1: Build the Spring Boot app using Maven
-FROM maven:3.9.2-eclipse-temurin-17 AS build
+# Stage 1: Build the Spring Boot app using OpenJDK 21 and Maven
+FROM openjdk:21-jdk-slim AS build
+
+# Install Maven
+RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
-# Copy Maven wrapper and configuration from the inner CampusConnect folder
-COPY CampusConnect/pom.xml .
-COPY CampusConnect/mvnw .
-COPY CampusConnect/.mvn .mvn
+# Copy Maven wrapper and configuration
+COPY pom.xml .
+COPY mvnw .
+RUN chmod +x mvnw
+COPY .mvn .mvn
 
 # Download dependencies for caching
 RUN ./mvnw dependency:go-offline -B
 
-# Copy the rest of the source code from the inner CampusConnect folder
-COPY CampusConnect/src ./src
+# Copy the rest of the source code
+COPY src ./src
 
 # Build the JAR file
 RUN ./mvnw clean package -DskipTests
 
-# Stage 2: Run the Spring Boot app
-FROM eclipse-temurin:17-jdk-alpine
+# Stage 2: Run the Spring Boot app with OpenJDK 21
+FROM openjdk:21-jdk-slim
 
 # Set working directory
 WORKDIR /app
